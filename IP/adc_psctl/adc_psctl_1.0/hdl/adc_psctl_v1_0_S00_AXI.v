@@ -15,10 +15,12 @@
 	)
 	(
 		// Users to add ports here
-		output wire ADC_PSCTL_EN,
-		output wire [31:0] ADC_PSCTL_SPI_FREQ,
-		output wire [31:0] ADC_PSCTL_SAMPLING_FREQ,
-		output wire [31:0] ADC_PSCTL_BUFFER,
+		output wire S_AXI_ADC_EN,
+		output wire S_AXI_ADC_MAN_TRIG,
+		output wire S_AXI_ADC_INT_EN,
+		output wire [31:0] S_AXI_ADC_SPI_CLK_DIV,
+		output wire [31:0] S_AXI_ADC_WRITE_BUFFER,
+		
 		
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -402,10 +404,11 @@
 	end    
 
 	// Add user logic here
-    assign ADC_PSCTL_EN = slv_reg0;
-    assign ADC_PSCTL_SPI_FREQ = slv_reg1;
-    assign ADC_PSCTL_SAMPLING_FREQ = slv_reg2;
-    assign ADC_PSCTL_BUFFER = slv_reg3;
+    assign S_AXI_ADC_EN = slv_reg0[0];
+    assign S_AXI_ADC_MAN_TRIG = slv_reg0[1];
+    assign S_AXI_ADC_INT_EN = slv_reg0[2];
+    assign S_AXI_ADC_SPI_CLK_DIV = slv_reg1;
+    assign S_AXI_ADC_WRITE_BUFFER = slv_reg2;
 	// User logic ends
 
 	endmodule

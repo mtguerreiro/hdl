@@ -40,6 +40,8 @@
 		
         output wire adc_done,
         
+        output wire adc_done_int,
+        
         input wire adc_start,
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -118,23 +120,14 @@
 		input wire  s00_axi_rready
 	);
 	
-	wire adc_psctl_en;	
-	wire [31:0] adc_psctl_sampling_freq;
-	wire [31:0] adc_psctl_spi_freq;
-	wire [31:0] adc_psctl_buffer;
-	wire [127:0] adc_psctl_data;
-	
-	wire [15:0] adc_data_1;
-    //wire [15:0] adc_data_2;
-	//wire [15:0] adc_data_3;
-    //wire [15:0] adc_data_4;
-	//wire [15:0] adc_data_5;
-    //wire [15:0] adc_data_6;
-	//wire [15:0] adc_data_7;
-    //wire [15:0] adc_data_8;
-        	
-    //wire adc_new_data;
 
+	wire adc_start_trigger;
+    wire adc_enable;
+    wire adc_manual_trigger;
+    wire adc_int_en;
+	wire [31:0] adc_spi_clk_div;
+	wire [31:0] adc_write_buffer;
+	wire [127:0] adc_data;
 			
 // Instantiation of Axi Bus Interface M00_AXI
 	adc_psctl_v1_0_M00_AXI # ( 
@@ -196,8 +189,8 @@
 		.M_AXI_RUSER(m00_axi_ruser),
 		.M_AXI_RVALID(m00_axi_rvalid),
 		.M_AXI_RREADY(m00_axi_rready),
-		.C_M_TARGET_SLAVE_BASE_ADDR(adc_psctl_buffer), //Connects the PS-config'd buffer to the base address of the M_AXI interface
-		.M_AXI_TX_DATA(adc_psctl_data)
+		.C_M_TARGET_SLAVE_BASE_ADDR(adc_write_buffer), //Connects the PS-config'd buffer to the base address of the M_AXI interface
+		.M_AXI_TX_DATA(adc_data)
 	);
 
 // Instantiation of Axi Bus Interface S00_AXI
@@ -226,31 +219,22 @@
 		.S_AXI_RRESP(s00_axi_rresp),
 		.S_AXI_RVALID(s00_axi_rvalid),
 		.S_AXI_RREADY(s00_axi_rready),
-		.ADC_PSCTL_EN(adc_psctl_en),
-		.ADC_PSCTL_SPI_FREQ(adc_psctl_spi_freq),
-		.ADC_PSCTL_SAMPLING_FREQ(adc_psctl_sampling_freq),
-		.ADC_PSCTL_BUFFER(adc_psctl_buffer)
+		.S_AXI_ADC_EN(adc_enable),
+		.S_AXI_ADC_MAN_TRIG(adc_manual_trigger),
+		.S_AXI_ADC_INT_EN(adc_int_en),
+		.S_AXI_ADC_SPI_CLK_DIV(adc_spi_clk_div),
+		.S_AXI_ADC_WRITE_BUFFER(adc_write_buffer)
 	);
 
     
 	// Add user logic here
-
-//	assign adc_psctl_data[15:0] = adc_data_1;
-//	assign adc_psctl_data[31:16] = adc_data_1;
-//	assign adc_psctl_data[47:32] = adc_data_1;
-//	assign adc_psctl_data[63:48] = adc_data_1;
-//	assign adc_psctl_data[79:64] = adc_data_1;
-//	assign adc_psctl_data[95:80] = adc_data_1;
-//	assign adc_psctl_data[111:96] = adc_data_1;
-//	assign adc_psctl_data[127:112] = adc_data_1;
-	wire adc_start_pulse;
-	
-	assign adc_start_pulse = adc_psctl_en | adc_start;
+	assign adc_start_trigger = (adc_manual_trigger | adc_start) & adc_enable;
+	assign adc_done_int = m00_axi_txn_done | ~adc_int_en;
 	
 	adc adc_1(
 	   .clk(s00_axi_aclk),
-	   .clk_div(adc_psctl_sampling_freq),
-	   .start(adc_start_pulse),
+	   .clk_div(adc_spi_clk_div),
+	   .start(adc_start_trigger),
 	   .clk_spi(adc_clk_spi),
 	   .cs_spi(adc_cs_spi),
 	   .sd_spi_1(adc_sd_spi_1),
@@ -262,9 +246,7 @@
 	   .sd_spi_7(adc_sd_spi_7),
 	   .sd_spi_8(adc_sd_spi_8),
 	   .done(adc_done),
-	   .data(adc_psctl_data)
+	   .data(adc_data)
 	);
 	
-	//assign adc_new_data = adc_new_1 & adc_new_2 & adc_new_3 & adc_new_4 & adc_new_5 & adc_new_6 & adc_new_7 & adc_new_8;
-
 	endmodule
