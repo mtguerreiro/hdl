@@ -41,8 +41,6 @@ wire ovf_trigger;
 
 reg [63:0] counter_tb = 0;
 
-wire [31:0] counter_dbg;
-
 pwm UUT (
     .clk(clk), 
     .reset(reset), 
@@ -53,8 +51,7 @@ pwm UUT (
     .pwm_cmp(pwm_cmp),
     .dead_time(dead_time),
     .ovf_trigger_enable(ovf_trigger_enable),
-    .ovf_trigger(ovf_trigger),
-    .counter_dbg(counter_dbg)
+    .ovf_trigger(ovf_trigger)
 );
 
 

@@ -29,8 +29,7 @@ module pwm(
     pwm_cmp,
     dead_time,
     ovf_trigger_enable,
-    ovf_trigger,
-    counter_dbg
+    ovf_trigger
     );
     
 input clk;
@@ -62,10 +61,6 @@ reg pwm_cmp_signal = 1'b0;
 
 reg ovf_signal = 1'b0;
 
-output wire [31:0] counter_dbg;
-assign counter_dbg = base_counter;
-
-
 /* Generates base counter and reload */
 always @ (posedge clk)
 begin
@@ -73,6 +68,7 @@ begin
         base_counter <= 32'b0;        
         duty_int <= duty;
         period_int <= period;
+        dead_time_int <= dead_time;
         
         if( period == 0 ) base_period <= 0;
         else base_period <= (period << 1) - 1;
@@ -131,7 +127,7 @@ begin
                 end
                 else begin
                     pwm_signal <= 1'b0;
-                    if( base_counter >= (duty + dead_time_int) ) pwm_cmp_signal <= 1'b1;
+                    if( base_counter >= (duty_int + dead_time_int) ) pwm_cmp_signal <= 1'b1;
                 end
             end
             else begin
