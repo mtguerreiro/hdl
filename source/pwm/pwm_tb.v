@@ -41,6 +41,8 @@ wire ovf_trigger;
 
 reg [63:0] counter_tb = 0;
 
+wire [31:0] counter_dbg;
+
 pwm UUT (
     .clk(clk), 
     .reset(reset), 
@@ -51,7 +53,8 @@ pwm UUT (
     .pwm_cmp(pwm_cmp),
     .dead_time(dead_time),
     .ovf_trigger_enable(ovf_trigger_enable),
-    .ovf_trigger(ovf_trigger)
+    .ovf_trigger(ovf_trigger),
+    .counter_dbg(counter_dbg)
 );
 
 
@@ -70,21 +73,33 @@ begin
     if(counter_tb <= 20) begin
         reset <= 1;
         period <= 10;
-        duty <= 3;
-        dead_time <= 0;
+        duty <= 2;
+        dead_time <= 1;
     end
     
     else if( (counter_tb > 20) && (counter_tb < 80) ) begin
         reset <= 0;
     end
 
-    else if( (counter_tb > 250) && (counter_tb < 260) ) begin
-        duty <= 6;
-        dead_time <= 1;
+    else if( (counter_tb > 90) && (counter_tb < 93) ) begin
+        duty <= 3;
     end
     
-    else if( (counter_tb > 450) && (counter_tb < 460) ) begin
+    else if( (counter_tb > 150) && (counter_tb < 153) ) begin
+        duty <= 0;
+    end
+
+    else if( (counter_tb > 210) && (counter_tb < 213) ) begin
+        duty <= 500;
+    end
+    
+    else if( (counter_tb > 260) && (counter_tb < 263) ) begin
+        duty <= 8;
+    end
+         
+    else if( (counter_tb > 350) && (counter_tb < 360) ) begin
         ovf_trigger_enable <= 0;
+        pwm_enable <= 0;
     end
 end
 
