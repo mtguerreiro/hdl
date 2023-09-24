@@ -81,7 +81,7 @@ always @ (posedge clk) begin
         clk_spi_en <= 0;
         
         clk_spi_en_t <= 2 - 1;
-        sample_t <= clk_div + clk_spi_en_t + 1;
+        sample_t <= 2 * clk_div + clk_spi_en_t + 1;
         last_sample_t <= clk_div * 32 + clk_spi_en_t;
         
         data_temp <= 0;
@@ -112,7 +112,7 @@ always @ (posedge clk) begin
             data_temp[111:96] <= (data_temp[111:96] << 1) | sd_spi_7;
             data_temp[127:112] <= (data_temp[127:112] << 1) | sd_spi_8;
                         
-            sample_t <= sample_t + 2 * clk_div;
+            sample_t <= sample_t + 2 * clk_div;            
         end
         
         if( counter == last_sample_t ) begin
