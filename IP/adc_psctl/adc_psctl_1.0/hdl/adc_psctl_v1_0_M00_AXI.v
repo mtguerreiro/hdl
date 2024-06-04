@@ -31,8 +31,9 @@
 	)
 	(
 		// Users to add ports here
+		// To change the size of TX data, change M_AXI_TX_DATA and also lines 240-241
         input wire [C_M_AXI_ADDR_WIDTH-1:0] C_M_TARGET_SLAVE_BASE_ADDR,
-        input wire [127:0] M_AXI_TX_DATA,
+        input wire [255:0] M_AXI_TX_DATA,
         
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -236,8 +237,8 @@
 	reg  	init_txn_edge;
 	wire  	init_txn_pulse;
 
-    reg [127:0] txdata_shift;
-    reg [127:0] rxdata_shift;
+    reg [255:0] txdata_shift;
+    reg [255:0] rxdata_shift;
     
 	// I/O Connections assignments
 

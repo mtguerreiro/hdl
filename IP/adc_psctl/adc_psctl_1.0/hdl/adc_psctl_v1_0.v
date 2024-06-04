@@ -37,7 +37,15 @@
 		input wire adc_sd_spi_6,
 		input wire adc_sd_spi_7,
 		input wire adc_sd_spi_8,
-		
+		input wire adc_sd_spi_9,
+		input wire adc_sd_spi_10,
+		input wire adc_sd_spi_11,
+		input wire adc_sd_spi_12,
+		input wire adc_sd_spi_13,
+		input wire adc_sd_spi_14,
+		input wire adc_sd_spi_15,
+		input wire adc_sd_spi_16,
+				
         output wire adc_done,
         
         output wire adc_done_int,
@@ -127,7 +135,7 @@
     wire adc_int_en;
 	wire [31:0] adc_spi_clk_div;
 	wire [31:0] adc_write_buffer;
-	wire [127:0] adc_data;
+	wire [255:0] adc_data;
 			
 // Instantiation of Axi Bus Interface M00_AXI
 	adc_psctl_v1_0_M00_AXI # ( 
@@ -245,6 +253,14 @@
 	   .sd_spi_6(adc_sd_spi_6),
 	   .sd_spi_7(adc_sd_spi_7),
 	   .sd_spi_8(adc_sd_spi_8),
+	   .sd_spi_9(adc_sd_spi_9),
+	   .sd_spi_10(adc_sd_spi_10),
+	   .sd_spi_11(adc_sd_spi_11),
+	   .sd_spi_12(adc_sd_spi_12),
+	   .sd_spi_13(adc_sd_spi_13),
+	   .sd_spi_14(adc_sd_spi_14),
+	   .sd_spi_15(adc_sd_spi_15),
+	   .sd_spi_16(adc_sd_spi_16),
 	   .done(adc_done),
 	   .data(adc_data)
 	);
