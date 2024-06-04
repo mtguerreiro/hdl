@@ -52,6 +52,7 @@
 	wire [31:0] pwm_dead_time;
     
     wire pwm_reset;
+    wire pwm_inv;
     wire pwm_output_enable;
     wire pwm_ovf_trigger_enable;
 	
@@ -84,6 +85,7 @@
 		.S_AXI_PWM_RESET(pwm_reset),
 		.S_AXI_PWM_OUTPUT_ENABLE(pwm_output_enable),
 		.S_AXI_PWM_OVF_TRIGGER_ENABLE(pwm_ovf_trigger_enable),
+		.S_AXI_PWM_INV(pwm_inv),
 		.S_AXI_PWM_PERIOD(pwm_period),
 		.S_AXI_PWM_DUTY(pwm_duty),
 		.S_AXI_PWM_DEAD_TIME(pwm_dead_time)
@@ -93,6 +95,7 @@
     pwm pwm_inst(
         .clk(s00_axi_aclk),
         .reset(pwm_reset),
+        .inv(pwm_inv),
         .period(pwm_period),
         .duty(pwm_duty),
         .pwm_enable(pwm_output_enable),
