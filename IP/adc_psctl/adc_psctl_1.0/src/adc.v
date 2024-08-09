@@ -17,6 +17,7 @@
 // Revision 0.01 - File Created
 // Additional Comments:
 // 
+//  print('data_temp[{:}:{:}] <= (data_temp[{:}:{:}] << 1) | sd_spi_{:}'.format(16*(i+1)-1,16*i, 16*(i+1)-1,16*i, i+1))
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -34,6 +35,14 @@ module adc(
     sd_spi_6,
     sd_spi_7,
     sd_spi_8,
+    sd_spi_9,
+    sd_spi_10,
+    sd_spi_11,
+    sd_spi_12,
+    sd_spi_13,
+    sd_spi_14,
+    sd_spi_15,
+    sd_spi_16,
     done,
     data
     );
@@ -52,9 +61,17 @@ input wire sd_spi_5;
 input wire sd_spi_6;
 input wire sd_spi_7;
 input wire sd_spi_8;
+input wire sd_spi_9;
+input wire sd_spi_10;
+input wire sd_spi_11;
+input wire sd_spi_12;
+input wire sd_spi_13;
+input wire sd_spi_14;
+input wire sd_spi_15;
+input wire sd_spi_16;
 
 output reg done = 1'b0;
-output reg [127:0] data = 128'b0;
+output reg [255:0] data = 128'b0;
 
 reg [31:0] counter = 32'b0;
 reg busy = 1'b1;
@@ -67,7 +84,7 @@ reg [31:0] clk_spi_en_t = 32'b0;
 reg [31:0] sample_t = 32'b0;
 reg [31:0] last_sample_t = 32'b0;
 
-reg [127:0] data_temp = 128'b0;
+reg [255:0] data_temp = 128'b0;
 
 always @ (posedge clk) begin
 
@@ -111,7 +128,15 @@ always @ (posedge clk) begin
             data_temp[95:80] <= (data_temp[95:80] << 1) | sd_spi_6;
             data_temp[111:96] <= (data_temp[111:96] << 1) | sd_spi_7;
             data_temp[127:112] <= (data_temp[127:112] << 1) | sd_spi_8;
-                        
+            data_temp[143:128] <= (data_temp[143:128] << 1) | sd_spi_9;
+            data_temp[159:144] <= (data_temp[159:144] << 1) | sd_spi_10;
+            data_temp[175:160] <= (data_temp[175:160] << 1) | sd_spi_11;
+            data_temp[191:176] <= (data_temp[191:176] << 1) | sd_spi_12;
+            data_temp[207:192] <= (data_temp[207:192] << 1) | sd_spi_13;
+            data_temp[223:208] <= (data_temp[223:208] << 1) | sd_spi_14;
+            data_temp[239:224] <= (data_temp[239:224] << 1) | sd_spi_15;
+            data_temp[255:240] <= (data_temp[255:240] << 1) | sd_spi_16;
+                                                
             sample_t <= sample_t + 2 * clk_div;            
         end
         
