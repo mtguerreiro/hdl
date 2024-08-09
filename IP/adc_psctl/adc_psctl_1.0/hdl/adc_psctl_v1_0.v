@@ -41,6 +41,7 @@
         output wire adc_done,
         
         output wire adc_done_int,
+        output wire adc_done_int_scaled,
         
         input wire adc_start,
 		// User ports ends
@@ -128,6 +129,9 @@
 	wire [31:0] adc_spi_clk_div;
 	wire [31:0] adc_write_buffer;
 	wire [127:0] adc_data;
+	
+	wire adc_scaled_int_en;
+	wire [3:0] adc_scaled_int_factor;
 			
 // Instantiation of Axi Bus Interface M00_AXI
 	adc_psctl_v1_0_M00_AXI # ( 
@@ -223,10 +227,11 @@
 		.S_AXI_ADC_MAN_TRIG(adc_manual_trigger),
 		.S_AXI_ADC_INT_EN(adc_int_en),
 		.S_AXI_ADC_SPI_CLK_DIV(adc_spi_clk_div),
-		.S_AXI_ADC_WRITE_BUFFER(adc_write_buffer)
+		.S_AXI_ADC_WRITE_BUFFER(adc_write_buffer),
+		.S_AXI_ADC_SCALED_INT_EN(adc_scaled_int_en),
+		.S_AXI_ADC_SCALED_INT_FACTOR(adc_scaled_int_factor)
 	);
 
-    
 	// Add user logic here
 	assign adc_start_trigger = (adc_manual_trigger | adc_start) & adc_enable;
 	assign adc_done_int = m00_axi_txn_done | ~adc_int_en;
@@ -248,5 +253,53 @@
 	   .done(adc_done),
 	   .data(adc_data)
 	);
+	
+	reg [31:0] scaled_int_counter = 32'b0;
+    reg adc_scaled_int = 0;
+
+	always @ (posedge m00_axi_txn_done) begin
+	   if( adc_scaled_int_en == 0 ) begin
+	       scaled_int_counter = 32'b0;
+	       adc_scaled_int = 0;
+	   end
+	   
+	   else begin
+           if( scaled_int_counter == adc_scaled_int_factor) begin
+               scaled_int_counter <= 0;
+               adc_scaled_int <= 1;
+           end
+           else begin
+               scaled_int_counter <= scaled_int_counter + 1;
+               adc_scaled_int <= 0;
+           end
+	   end
+	end
+//	always @ (posedge s00_axi_aclk) begin
+//	   if( adc_scaled_int_en == 0 ) begin
+//	       scaled_int_counter = 32'b0;
+//	       adc_scaled_int = 0;
+//	   end
+	   
+//	   else begin
+//	       if( m00_axi_txn_done == 1 ) begin
+//               if( scaled_int_counter == adc_scaled_int_factor) begin
+//                   scaled_int_counter <= 0;
+//                   adc_scaled_int <= 1;
+//               end
+//               else begin
+//                   scaled_int_counter <= scaled_int_counter + 1;
+//                   adc_scaled_int <= 0;
+//               end
+//           end
+           
+//           else begin
+//               scaled_int_counter <= scaled_int_counter;
+//               adc_scaled_int <= adc_scaled_int;
+//           end
+//	   end
+	   
+//	end
+	
+	assign adc_done_int_scaled = adc_scaled_int | ~adc_scaled_int_en;
 	
 	endmodule

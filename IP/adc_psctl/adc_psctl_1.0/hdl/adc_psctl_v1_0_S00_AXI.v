@@ -18,6 +18,8 @@
 		output wire S_AXI_ADC_EN,
 		output wire S_AXI_ADC_MAN_TRIG,
 		output wire S_AXI_ADC_INT_EN,
+		output wire S_AXI_ADC_SCALED_INT_EN,
+		output wire [3:0] S_AXI_ADC_SCALED_INT_FACTOR,
 		output wire [31:0] S_AXI_ADC_SPI_CLK_DIV,
 		output wire [31:0] S_AXI_ADC_WRITE_BUFFER,
 		
@@ -407,6 +409,8 @@
     assign S_AXI_ADC_EN = slv_reg0[0];
     assign S_AXI_ADC_MAN_TRIG = slv_reg0[1];
     assign S_AXI_ADC_INT_EN = slv_reg0[2];
+    assign S_AXI_ADC_SCALED_INT_EN = slv_reg0[3];
+    assign S_AXI_ADC_SCALED_INT_FACTOR = slv_reg0[7:4];
     assign S_AXI_ADC_SPI_CLK_DIV = slv_reg1;
     assign S_AXI_ADC_WRITE_BUFFER = slv_reg2;
 	// User logic ends
