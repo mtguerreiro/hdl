@@ -43,6 +43,13 @@
         output wire adc_done_int,
         
         input wire adc_start,
+        
+        output wire [15:0] adc_data_spi_1,
+        output wire [15:0] adc_data_spi_2,
+        output wire [15:0] adc_data_spi_3,
+        output wire [15:0] adc_data_spi_4,
+        output wire [15:0] adc_data_spi_5,
+        output wire [15:0] adc_data_spi_6,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -246,7 +253,13 @@
 	   .sd_spi_7(adc_sd_spi_7),
 	   .sd_spi_8(adc_sd_spi_8),
 	   .done(adc_done),
-	   .data(adc_data)
+	   .data(adc_data),
+	   .data_spi_1(adc_data_spi_1),
+	   .data_spi_2(adc_data_spi_2),
+	   .data_spi_3(adc_data_spi_3),
+	   .data_spi_4(adc_data_spi_4),
+	   .data_spi_5(adc_data_spi_5),
+	   .data_spi_6(adc_data_spi_6)
 	);
 	
 	endmodule

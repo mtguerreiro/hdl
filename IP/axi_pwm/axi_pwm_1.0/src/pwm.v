@@ -29,12 +29,14 @@ module pwm(
     pwm_cmp,
     dead_time,
     ovf_trigger_enable,
-    ovf_trigger
+    ovf_trigger,
+    inv,
+    period_feedback
     );
     
 input clk;
 input reset;
-
+input inv;
 input [31:0] period;
 input [31:0] duty;
 
@@ -46,6 +48,8 @@ output wire pwm_cmp;
 
 input ovf_trigger_enable;
 output wire ovf_trigger;
+
+output wire [31:0] period_feedback;
 
 reg [31:0] period_int = 32'b0;
 reg [31:0] duty_int = 32'b0;
@@ -60,12 +64,13 @@ reg pwm_signal = 1'b0;
 reg pwm_cmp_signal = 1'b0;
 
 reg ovf_signal = 1'b0;
+reg pwm_signal_if_inv = 1'b0;
 
 /* Generates base counter and reload */
 always @ (posedge clk)
 begin
     if( reset == 1'b1 ) begin
-        base_counter <= 32'b0;        
+        base_counter <= 32'b0;
         duty_int <= duty;
         period_int <= period;
         dead_time_int <= dead_time;
@@ -110,7 +115,7 @@ begin
         pwm_cmp_signal <= 1'b0;
     end
     else begin
-    
+        
         if( duty_int >= period_int) begin
             pwm_cmp_signal <= 1'b0;
             if( base_counter >= dead_time_int) pwm_signal <= 1'b1;
@@ -144,12 +149,20 @@ begin
                     if( base_counter > (base_period - duty_int) ) pwm_signal <= 1'b1;
                 end
             end
+          
+            
         end
     end
+
 end
 
+
+
 assign ovf_trigger = ovf_signal & ovf_trigger_enable;
-assign pwm = pwm_signal & ~reset & pwm_enable;
-assign pwm_cmp = pwm_cmp_signal & ~reset & pwm_enable;
+
+assign pwm = (pwm_signal & ~reset & pwm_enable)^inv;
+assign pwm_cmp = (pwm_cmp_signal & ~reset & pwm_enable)^inv;
+
+assign period_feedback = period;
 
 endmodule

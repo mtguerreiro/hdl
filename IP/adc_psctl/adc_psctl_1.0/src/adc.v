@@ -35,7 +35,13 @@ module adc(
     sd_spi_7,
     sd_spi_8,
     done,
-    data
+    data,
+    data_spi_1,
+    data_spi_2,
+    data_spi_3,
+    data_spi_4,
+    data_spi_5,
+    data_spi_6
     );
 
 input wire clk;
@@ -55,6 +61,13 @@ input wire sd_spi_8;
 
 output reg done = 1'b0;
 output reg [127:0] data = 128'b0;
+
+output reg [15:0] data_spi_1;
+output reg [15:0] data_spi_2;
+output reg [15:0] data_spi_3;
+output reg [15:0] data_spi_4;
+output reg [15:0] data_spi_5;
+output reg [15:0] data_spi_6;
 
 reg [31:0] counter = 32'b0;
 reg busy = 1'b1;
@@ -117,6 +130,12 @@ always @ (posedge clk) begin
         
         if( counter == last_sample_t ) begin
             data <= data_temp;
+            data_spi_1 <= data[15:0];
+            data_spi_2 <= data[31:16];
+            data_spi_3 <= data[47:32];
+            data_spi_4 <= data[63:48];
+            data_spi_5 <= data[79:64];
+            data_spi_6 <= data[95:80];            
             cs_spi <= 1;
             clk_spi_en <= 0;
             done <= 1;

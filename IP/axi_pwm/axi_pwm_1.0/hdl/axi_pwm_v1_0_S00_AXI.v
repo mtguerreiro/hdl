@@ -18,6 +18,8 @@
 		output wire S_AXI_PWM_RESET,
 		output wire S_AXI_PWM_OUTPUT_ENABLE,
 		output wire S_AXI_PWM_OVF_TRIGGER_ENABLE,
+		output wire S_AXI_PWM_INV, //added by rodolfo
+		output wire S_AXI_PWM_DUTY_BYPASS,
 		
 		output wire [31:0] S_AXI_PWM_PERIOD,
 		output wire [31:0] S_AXI_PWM_DUTY,
@@ -408,6 +410,8 @@
 	assign S_AXI_PWM_RESET = slv_reg0[0];
     assign S_AXI_PWM_OUTPUT_ENABLE = slv_reg0[1];
     assign S_AXI_PWM_OVF_TRIGGER_ENABLE = slv_reg0[2];
+    assign S_AXI_PWM_INV = slv_reg0[3]; //added by rodolfo
+    assign S_AXI_PWM_DUTY_BYPASS = slv_reg0[4];
     
     assign S_AXI_PWM_PERIOD = slv_reg1;
     assign S_AXI_PWM_DUTY = slv_reg2;

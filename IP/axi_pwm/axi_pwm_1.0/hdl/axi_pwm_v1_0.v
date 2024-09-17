@@ -15,9 +15,12 @@
 	)
 	(
 		// Users to add ports here
+		input [31:0] pwm_pl_duty,
+		
 		output wire pwm_a,
 		output wire pwm_b,
 		output wire ovf_trigger,
+		output wire [31:0] pwm_period_feedback,
 
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -49,11 +52,14 @@
 	
 	wire [31:0] pwm_period;
 	wire [31:0] pwm_duty;
+	wire [31:0] pwm_selected_duty;
 	wire [31:0] pwm_dead_time;
     
     wire pwm_reset;
+    wire pwm_inv;
     wire pwm_output_enable;
     wire pwm_ovf_trigger_enable;
+    wire pwm_bypass;
 	
 // Instantiation of Axi Bus Interface S00_AXI
 	axi_pwm_v1_0_S00_AXI # ( 
@@ -84,23 +90,34 @@
 		.S_AXI_PWM_RESET(pwm_reset),
 		.S_AXI_PWM_OUTPUT_ENABLE(pwm_output_enable),
 		.S_AXI_PWM_OVF_TRIGGER_ENABLE(pwm_ovf_trigger_enable),
+		.S_AXI_PWM_INV(pwm_inv),
+		.S_AXI_PWM_DUTY_BYPASS(pwm_bypass),
 		.S_AXI_PWM_PERIOD(pwm_period),
 		.S_AXI_PWM_DUTY(pwm_duty),
 		.S_AXI_PWM_DEAD_TIME(pwm_dead_time)
 	);
 
 	// Add user logic here
-    pwm pwm_inst(
+	bypass_mux bypass_mux_inst(
+	    .bypass_control(pwm_bypass),
+	    .bypass_duty(pwm_duty),
+	    .non_bypass_duty(pwm_pl_duty),
+	    .selected_duty(pwm_selected_duty)
+	);
+	
+	pwm pwm_inst(
         .clk(s00_axi_aclk),
         .reset(pwm_reset),
+        .inv(pwm_inv),
         .period(pwm_period),
-        .duty(pwm_duty),
+        .duty(pwm_selected_duty),
         .pwm_enable(pwm_output_enable),
         .pwm(pwm_a),
         .pwm_cmp(pwm_b),
         .dead_time(pwm_dead_time),
         .ovf_trigger_enable(pwm_ovf_trigger_enable),
-        .ovf_trigger(ovf_trigger)
+        .ovf_trigger(ovf_trigger),
+        .period_feedback(pwm_period_feedback)
     );
 	// User logic ends
 
